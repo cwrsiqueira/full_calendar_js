@@ -47,7 +47,8 @@ body {
 .modal-close {
   cursor: pointer;
   color: red;
-  font-weight: bold;
+  font-weight: 400;
+  font-size: 18px;
 }
 
 .hidden {

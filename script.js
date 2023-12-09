@@ -1,5 +1,18 @@
+
+/**
+ * Aguarda o carregamento da página
+ */
 document.addEventListener('DOMContentLoaded', function () {
+
+    /**
+     * Armazena o elemento com o id calendar na variável calendarEl
+     */
     var calendarEl = document.getElementById('calendar');
+
+    /**
+     * Inicia e configura o Full Calendar conf. documentação
+     * https://fullcalendar.io/docs
+     */
     var calendar = new FullCalendar.Calendar(calendarEl, {
         headerToolbar: {
             left: 'prev,next today',
@@ -25,9 +38,36 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         events: 'lista-eventos.php',
     });
-    // calendar.setOption('locale', 'pt');
+    /**
+     * Renderiza o calendário
+     */
     calendar.render();
 
+    /** Armazena o elemento modal com as classes informadas, na variável */
+    let modal = document.querySelector('.modal-opened.modal-cadastro');
+
+    /**
+     * Abre o modal de cadastro e preenche a data clicada, no campo correspondente
+     * @param {object} date data recebida do elemento clicado no calendário
+     */
+    const abrirModal = (date) => {
+        if (modal.classList.contains('hidden')) {
+            modal.classList.remove('hidden');
+
+            modal.style.transition = 'opacity 300ms';
+
+            setTimeout(() => modal.style.opacity = '1', 100);
+        }
+        modal.querySelector('#ev_start').value = date + " 08:00";
+        modal.querySelector('#ev_end').value = date + " 22:00";
+    }
+
+    /**
+     * Recebe e trata os dados do elemento movido no calendário
+     * Envia os dados tratados via Ajax para o arquivo PHP que faz as devidas alterações
+     * e atualiza a movimentação do evento no Banco de dados
+     * @param {object} info dados do elemento movido no calendário
+     */
     const moverEvento = (info) => {
         let id = info.event.id;
         let title = info.event.title;
@@ -64,21 +104,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    const abrirModal = (date) => {
-        let modal = document.querySelector('.modal-opened');
-        if (modal.classList.contains('hidden')) {
-            modal.classList.remove('hidden');
-
-            modal.style.transition = 'opacity 300ms';
-
-            setTimeout(() => modal.style.opacity = '1', 100);
-        }
-        modal.querySelector('#ev_start').value = date + " 00:00";
-        modal.querySelector('#ev_end').value = date + " 23:59";
-    }
-
+    /**
+     * Recebe os dados do elemento clicado no calendário
+     * Abre o modal de edição do evento
+     * e preenche os dados do evento no formulário de edição
+     * @param {object} data dados do elemento clicado no calendário
+     */
     const abrirModalEditar = (data) => {
-        let modal = document.querySelector('.modal-opened');
         if (modal.classList.contains('hidden')) {
             modal.classList.remove('hidden');
 
@@ -104,8 +136,10 @@ document.addEventListener('DOMContentLoaded', function () {
         modal.querySelector('.btn-delete').classList.remove('hidden');
     }
 
+    /**
+     * Fecha o modal de cadastro e edição
+     */
     const fecharModal = () => {
-        let modal = document.querySelector('.modal-opened');
         if (!modal.classList.contains('hidden')) {
 
             modal.style.transition = 'opacity 300ms';
@@ -125,22 +159,36 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    /**
+     * Aguarda o evento de clique no elemento para fechar o modal
+     */
     document.querySelector('.modal-close').addEventListener('click', function () {
         fecharModal();
     });
 
-    document.querySelector('.modal-opened').addEventListener('click', function (event) {
+    /**
+     * Fecha o modal ao clicar fora do formulário do modal de cadastro e edição
+     */
+    modal.addEventListener('click', function (event) {
         if (event.target === this) {
             fecharModal();
         }
     });
 
+    /**
+     * Fecha o modal ao pressionar a tecla ESC (escape) no teclado
+     */
     document.addEventListener('keydown', function (event) {
         if (event.key === 'Escape') {
             fecharModal();
         }
     });
 
+    /**
+     * Verifica se os campos obrigatórios estão preenchidos
+     * Emite um alerta se não estiverem
+     * Submete o formulário caso estiverem preenchidos
+     */
     document.querySelector('#form-add-event').addEventListener('submit', function (e) {
         e.preventDefault();
         let title = document.querySelector('#title');
@@ -159,6 +207,9 @@ document.addEventListener('DOMContentLoaded', function () {
         this.submit();
     });
 
+    /**
+     * Faz a confirmação via Javascript através do alert para excluir um evento
+     */
     document.querySelector('.btn-delete').addEventListener('click', function () {
         if (confirm('Você quer mesmo excluir esse evento definitivamente? Esta ação não tem retorno.')) {
             document.querySelector('#action').value = 'delete';

@@ -1,30 +1,26 @@
-<?php session_start(); ?>
+<?php session_start();
+/** Inicia uma sessão para receber as mensagens gravadas */ ?>
+
+<!-- Inicia o HTML -->
 <!DOCTYPE html>
 <html lang='pt-br'>
 
 <head>
     <meta charset='utf-8' />
     <title>Full Calendar</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <div class="msg">
-        <?php if (!empty($_SESSION['msg'])) {
-            echo $_SESSION['msg'];
-            unset($_SESSION['msg']);
-        } ?>
-    </div>
-
-    <div class="modal-opened hidden">
+    <!-- Formulário modal de cadastro, edição e exclusão -->
+    <div class="modal-opened hidden modal-cadastro">
         <div class="modal">
             <div class="modal-header">
                 <div class="modal-title">
                     <h3>Cadastrar Evento</h3>
                 </div>
-                <div class="modal-close"><i class="fa-solid fa-xmark"></i></div>
+                <div class="modal-close">x</div>
             </div>
             <form action="action-event.php" method="post" id="form-add-event">
                 <div class="modal-body">
@@ -48,11 +44,23 @@
     </div>
 
     <div class="calendar-area">
+        <!-- Mostra mensagens de sucesso ou erro, gravadas na sessão msg -->
+        <div class="msg">
+            <?php if (!empty($_SESSION['msg'])) {
+                echo $_SESSION['msg'];
+                unset($_SESSION['msg']);
+            } ?>
+        </div>
+
+        <!-- Renderiza o calendário Full Calendar -->
         <div id='calendar'></div>
     </div>
 
+    <!-- Arquivos js do Full Calendar -->
     <script src='dist/index.global.min.js'></script>
+    <!-- Arquivos js da tradução do Full Calendar -->
     <script src="core/locales/pt-br.global.min.js"></script>
+    <!-- Arquivo js customizado -->
     <script src="script.js"></script>
 </body>
 
